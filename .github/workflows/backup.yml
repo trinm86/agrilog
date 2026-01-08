@@ -19,10 +19,10 @@ jobs:
           # 1. Mã hóa mật khẩu
           ENCODED_PASSWORD=$(node -e "console.log(encodeURIComponent(process.env.DB_PASSWORD))")
           
-          # 2. Sử dụng Direct Host với tham số xác thực dự án
-          # Username lúc này chỉ để là postgres
+          # 2. SỬ DỤNG IP TRỰC TIẾP ĐỂ TRÁNH LỖI IPv6
+          # Chúng ta dùng user định dạng postgres.PROJECT_ID để Pooler nhận diện đúng Tenant
           npx supabase db dump \
-            --db-url "postgresql://postgres:$ENCODED_PASSWORD@db.iwajurvzxwcxtcokohfd.supabase.co:6543/postgres" \
+            --db-url "postgresql://postgres.iwajurvzxwcxtcokohfd:$ENCODED_PASSWORD@54.255.219.82:6543/postgres" \
             -f backup_$(date +%Y%m%d).sql
 
       - name: Upload Backup to GitHub Artifacts
