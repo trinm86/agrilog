@@ -2,8 +2,8 @@ name: Weekly Supabase Backup
 
 on:
   schedule:
-    - cron: '0 0 * * 0' # Chạy 00:00 Chủ nhật hàng tuần
-  workflow_dispatch: # Cho phép bấm nút chạy thủ công
+    - cron: '0 0 * * 0'
+  workflow_dispatch: 
 
 jobs:
   backup:
@@ -19,15 +19,17 @@ jobs:
 
       - name: Run pg_dump
         env:
-          # GitHub tự động hiểu biến PGPASSWORD để pg_dump không hỏi mật khẩu
+          # Bạn PHẢI có secret này trong GitHub Settings
           PGPASSWORD: ${{ secrets.DB_PASSWORD }} 
         run: |
-          # Sử dụng các thông số tách rời để tránh lỗi ký tự đặc biệt
+          # Sử dụng trực tiếp Project ID của bạn: iwajurvzxwcxtcokohfd
+          # Thử kết nối qua host chuẩn của Supabase
           pg_dump \
-            -h ${{ secrets.DB_HOST }} \
+            -h db.iwajurvzxwcxtcokohfd.supabase.co \
             -p 5432 \
             -U postgres \
             -d postgres \
+            -v \
             -F p > backup_$(date +%Y%m%d).sql
 
       - name: Upload Backup to GitHub Artifacts
