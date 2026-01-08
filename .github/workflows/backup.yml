@@ -12,23 +12,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install PostgreSQL Client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
       - name: Run Backup
         env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          PROJECT_ID: iwajurvzxwcxtcokohfd
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          # 1. Khởi tạo cấu trúc Supabase local
-          npx supabase init
-          
-          # 2. Đăng nhập bằng Access Token
-          npx supabase login --token "$SUPABASE_ACCESS_TOKEN"
-          
-          # 3. Liên kết tới dự án (Bước này đã thông mạng thành công ở log trước)
-          npx supabase link --project-ref "$PROJECT_ID" -p "$DB_PASSWORD" --skip-pooler
-          
-          # 4. Xuất database (Bỏ flag --project-ref vì CLI đã tự hiểu dự án được link)
-          npx supabase db dump -f backup_$(date +%Y%m%d).sql -p "$DB_PASSWORD"
+          # 1. Ép hệ thống ưu tiên IPv4 bằng cách cấu hình hệ thống máy ảo GitHub
+          sudo sh -c 'echo "precedence ::ffff:0:0/96 100" >> /etc/gai.conf'
+
+          # 2. Sử dụng Host chuẩn của Supabase nhưng kết nối qua IPv4 đã được ưu tiên
+          # Định dạng User chuẩn của Supabase cho kết nối trực tiếp
+          pg_dump \
+            -h db.iwajurvzxwcxtcokohfd.supabase.co \
+            -p 5432 \
+            -U postgres \
+            -d postgres \
+            -v \
+            -F p > backup_$(date +%Y%m%d).sql
 
       - name: Upload Backup
         uses: actions/upload-artifact@v4
