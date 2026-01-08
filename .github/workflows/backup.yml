@@ -12,20 +12,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Bước này cài đặt công cụ chính chủ của Supabase
-      - name: Install Supabase CLI
-        run: |
-          npm install -g supabase
-
-      - name: Run Backup via CLI
+      - name: Run Backup via Supabase CLI
         env:
-          # Bạn cần tạo 2 Secret mới này trong GitHub
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          # Link tới project và xuất file sql
-          supabase login --token "$SUPABASE_ACCESS_TOKEN"
-          supabase db dump --project-ref iwajurvzxwcxtcokohfd -f backup_$(date +%Y%m%d).sql --db-password "$DB_PASSWORD"
+          # Dùng npx để chạy trực tiếp lệnh db dump
+          # iwajurvzxwcxtcokohfd là Project Ref của bạn
+          npx supabase db dump \
+            --project-ref iwajurvzxwcxtcokohfd \
+            --token "$SUPABASE_ACCESS_TOKEN" \
+            --db-password "$DB_PASSWORD" \
+            -f backup_$(date +%Y%m%d).sql
 
       - name: Upload Backup to GitHub Artifacts
         uses: actions/upload-artifact@v4
