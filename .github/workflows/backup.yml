@@ -19,17 +19,16 @@ jobs:
 
       - name: Run Backup
         env:
-          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          # 1. Sử dụng IP cố định của Supabase Pooler tại Singapore (ap-southeast-1)
-          # 2. Dùng cổng 6543 (Pooler) thay vì 5432 để xuyên thủng rào cản mạng
-          # 3. Quan trọng: User phải có hậu tố .pooler để định danh luồng
+          # 1. Mã hóa mật khẩu để đưa vào URI
+          ENCODED_PASSWORD=$(node -e "console.log(encodeURIComponent(process.env.DB_PASSWORD))")
+
+          # 2. Sử dụng định dạng URI đặc biệt cho Pooler
+          # Thay vì -h -U -p, ta dùng tham số d (database) là cả một chuỗi URI
+          # Lưu ý: 'options=project' là chìa khóa để hết lỗi "Tenant not found"
           
-          pg_dump \
-            -h 54.255.219.82 \
-            -p 6543 \
-            -U postgres.iwajurvzxwcxtcokohfd \
-            -d postgres \
+          pg_dump "postgresql://postgres.iwajurvzxwcxtcokohfd:$ENCODED_PASSWORD@54.255.219.82:6543/postgres?options=project%3Diwajurvzxwcxtcokohfd" \
             -v \
             -F p > backup_$(date +%Y%m%d).sql
 
