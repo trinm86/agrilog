@@ -18,17 +18,17 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           PROJECT_ID: iwajurvzxwcxtcokohfd
         run: |
-          # 1. Khởi tạo
+          # 1. Khởi tạo cấu trúc Supabase local
           npx supabase init
           
-          # 2. Đăng nhập
+          # 2. Đăng nhập bằng Access Token
           npx supabase login --token "$SUPABASE_ACCESS_TOKEN"
           
-          # 3. Liên kết dự án (Đã link thành công ở lần trước rồi)
+          # 3. Liên kết tới dự án (Bước này đã thông mạng thành công ở log trước)
           npx supabase link --project-ref "$PROJECT_ID" -p "$DB_PASSWORD" --skip-pooler
           
-          # 4. Xuất database (BỎ --project-ref vì đã link ở trên)
-          npx supabase db dump -f backup_$(date +%Y%m%d).sql --db-password "$DB_PASSWORD"
+          # 4. Xuất database (Bỏ flag --project-ref vì CLI đã tự hiểu dự án được link)
+          npx supabase db dump -f backup_$(date +%Y%m%d).sql -p "$DB_PASSWORD"
 
       - name: Upload Backup
         uses: actions/upload-artifact@v4
