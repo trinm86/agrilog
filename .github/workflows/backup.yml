@@ -16,13 +16,18 @@ jobs:
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          PROJECT_ID: iwajurvzxwcxtcokohfd
         run: |
-          # 1. Khởi tạo và liên kết dự án (Lệnh này tự xử lý mạng)
+          # 1. Khởi tạo
           npx supabase init
-          npx supabase link --project-ref "$PROJECT_ID" -p "$DB_PASSWORD" --token "$SUPABASE_ACCESS_TOKEN"
           
-          # 2. Xuất database (Lệnh này dùng thông tin đã link ở bước trên)
+          # 2. Đăng nhập bằng Token (Lệnh này không dùng flag mà dùng biến môi trường)
+          npx supabase login --token "$SUPABASE_ACCESS_TOKEN"
+          
+          # 3. Liên kết dự án (Dùng --skip-pooler để ép dùng kết nối khác ổn định hơn)
+          npx supabase link --project-ref "$PROJECT_ID" -p "$DB_PASSWORD" --skip-pooler
+          
+          # 4. Xuất database
           npx supabase db dump --project-ref "$PROJECT_ID" -f backup_$(date +%Y%m%d).sql --db-password "$DB_PASSWORD"
 
       - name: Upload Backup
