@@ -2,9 +2,8 @@ name: Weekly Supabase Backup
 
 on:
   schedule:
-    # Chạy vào lúc 00:00 mỗi ngày Chủ Nhật (UTC)
-    - cron: '0 0 * * 0'
-  workflow_dispatch: # Cho phép bạn bấm nút chạy thủ công bất cứ lúc nào
+    - cron: '0 0 * * 0' # Chạy 00:00 Chủ nhật hàng tuần
+  workflow_dispatch: # Cho phép bấm nút chạy thủ công
 
 jobs:
   backup:
@@ -20,15 +19,20 @@ jobs:
 
       - name: Run pg_dump
         env:
-          # Chỉ chứa mật khẩu thật, không bao gồm ký tự đặc biệt của URI
+          # GitHub tự động hiểu biến PGPASSWORD để pg_dump không hỏi mật khẩu
           PGPASSWORD: ${{ secrets.DB_PASSWORD }} 
         run: |
-          # Sử dụng các cờ (flags) riêng biệt thay vì chuỗi URI dài
-          pg_dump -h ipv4.iwajurvzxwcxtcokohfd.supabase.co -p 5432 -U postgres -d postgres > backup_$(date +%Y%m%d).sql
+          # Sử dụng các thông số tách rời để tránh lỗi ký tự đặc biệt
+          pg_dump \
+            -h ${{ secrets.DB_HOST }} \
+            -p 5432 \
+            -U postgres \
+            -d postgres \
+            -F p > backup_$(date +%Y%m%d).sql
 
       - name: Upload Backup to GitHub Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: supabase-backup-${{ github.run_id }}
           path: backup_*.sql
-          retention-days: 30 # Lưu trữ file này trong 30 ngày trên GitHub
+          retention-days: 30
