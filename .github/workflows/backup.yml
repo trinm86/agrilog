@@ -12,22 +12,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Backup via Supabase CLI
+      - name: Run Backup
         env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          PROJECT_ID: ${{ secrets.PROJECT_ID }}
         run: |
-          # 1. Mã hóa mật khẩu
-          ENCODED_PASSWORD=$(node -e "console.log(encodeURIComponent(process.env.DB_PASSWORD))")
+          # 1. Khởi tạo và liên kết dự án (Lệnh này tự xử lý mạng)
+          npx supabase init
+          npx supabase link --project-ref "$PROJECT_ID" -p "$DB_PASSWORD" --token "$SUPABASE_ACCESS_TOKEN"
           
-          # 2. SỬ DỤNG IP TRỰC TIẾP ĐỂ TRÁNH LỖI IPv6
-          # Chúng ta dùng user định dạng postgres.PROJECT_ID để Pooler nhận diện đúng Tenant
-          npx supabase db dump \
-            --db-url "postgresql://postgres.iwajurvzxwcxtcokohfd:$ENCODED_PASSWORD@54.255.219.82:6543/postgres" \
-            -f backup_$(date +%Y%m%d).sql
+          # 2. Xuất database (Lệnh này dùng thông tin đã link ở bước trên)
+          npx supabase db dump --project-ref "$PROJECT_ID" -f backup_$(date +%Y%m%d).sql --db-password "$DB_PASSWORD"
 
-      - name: Upload Backup to GitHub Artifacts
+      - name: Upload Backup
         uses: actions/upload-artifact@v4
         with:
-          name: supabase-backup-${{ github.run_id }}
+          name: supabase-backup
           path: backup_*.sql
           retention-days: 30
