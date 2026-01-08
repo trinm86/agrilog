@@ -25,8 +25,8 @@ jobs:
           # Sử dụng trực tiếp Project ID của bạn: iwajurvzxwcxtcokohfd
           # Thử kết nối qua host chuẩn của Supabase
           pg_dump \
-            -h db.iwajurvzxwcxtcokohfd.supabase.co \
-            -p 5432 \
+            -h aws-0-ap-southeast-1.pooler.supabase.com \
+            -p 6543 \
             -U postgres \
             -d postgres \
             -v \
