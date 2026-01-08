@@ -16,11 +16,11 @@ jobs:
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          # 1. Mã hóa mật khẩu để dùng trong URL (tránh lỗi ký tự đặc biệt)
-          ENCODED_PASSWORD=$(node -e "echo encodeURIComponent(process.env.DB_PASSWORD)")
+          # 1. Mã hóa mật khẩu chuẩn xác bằng Node.js
+          ENCODED_PASSWORD=$(node -e "console.log(encodeURIComponent(process.env.DB_PASSWORD))")
           
           # 2. Chạy lệnh dump dùng --db-url
-          # Lưu ý: Cổng 6543 giúp tránh lỗi Network Unreachable (IPv6)
+          # Sử dụng cổng 6543 của Pooler để tránh lỗi IPv6 (Network unreachable)
           npx supabase db dump \
             --db-url "postgresql://postgres.iwajurvzxwcxtcokohfd:$ENCODED_PASSWORD@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres" \
             -f backup_$(date +%Y%m%d).sql
