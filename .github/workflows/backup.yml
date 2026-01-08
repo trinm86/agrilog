@@ -21,14 +21,14 @@ jobs:
           # 1. Khởi tạo
           npx supabase init
           
-          # 2. Đăng nhập bằng Token (Lệnh này không dùng flag mà dùng biến môi trường)
+          # 2. Đăng nhập
           npx supabase login --token "$SUPABASE_ACCESS_TOKEN"
           
-          # 3. Liên kết dự án (Dùng --skip-pooler để ép dùng kết nối khác ổn định hơn)
+          # 3. Liên kết dự án (Đã link thành công ở lần trước rồi)
           npx supabase link --project-ref "$PROJECT_ID" -p "$DB_PASSWORD" --skip-pooler
           
-          # 4. Xuất database
-          npx supabase db dump --project-ref "$PROJECT_ID" -f backup_$(date +%Y%m%d).sql --db-password "$DB_PASSWORD"
+          # 4. Xuất database (BỎ --project-ref vì đã link ở trên)
+          npx supabase db dump -f backup_$(date +%Y%m%d).sql --db-password "$DB_PASSWORD"
 
       - name: Upload Backup
         uses: actions/upload-artifact@v4
