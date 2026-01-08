@@ -21,11 +21,12 @@ jobs:
         env:
           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          # 1. Ép hệ thống ưu tiên IPv4 bằng cách cấu hình hệ thống máy ảo GitHub
+          # 1. ÉP HỆ THỐNG DÙNG IPv4 (Quan trọng nhất)
+          # Dòng này ép máy chủ GitHub ưu tiên IPv4 hơn IPv6 để tránh lỗi Network unreachable
           sudo sh -c 'echo "precedence ::ffff:0:0/96 100" >> /etc/gai.conf'
 
-          # 2. Sử dụng Host chuẩn của Supabase nhưng kết nối qua IPv4 đã được ưu tiên
-          # Định dạng User chuẩn của Supabase cho kết nối trực tiếp
+          # 2. Chạy pg_dump trực tiếp tới host của bồ
+          # Dùng cổng 5432 truyền thống
           pg_dump \
             -h db.iwajurvzxwcxtcokohfd.supabase.co \
             -p 5432 \
