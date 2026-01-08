@@ -21,16 +21,17 @@ jobs:
         env:
           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          # 1. ÉP HỆ THỐNG DÙNG IPv4 (Quan trọng nhất)
-          # Dòng này ép máy chủ GitHub ưu tiên IPv4 hơn IPv6 để tránh lỗi Network unreachable
-          sudo sh -c 'echo "precedence ::ffff:0:0/96 100" >> /etc/gai.conf'
+          # 1. Tìm địa chỉ IPv4 của host bằng lệnh 'dig'
+          # Lệnh này sẽ lọc bỏ hoàn toàn địa chỉ IPv6
+          DB_IPV4=$(dig +short A db.iwajurvzxwcxtcokohfd.supabase.co | head -n1)
+          echo "Connecting to IPv4: $DB_IPV4"
 
-          # 2. Chạy pg_dump trực tiếp tới host của bồ
-          # Dùng cổng 5432 truyền thống
+          # 2. Chạy pg_dump bằng IP trực tiếp
+          # Phải dùng User dạng postgres.PROJECT_ID khi kết nối qua IP để Supabase nhận diện được project
           pg_dump \
-            -h db.iwajurvzxwcxtcokohfd.supabase.co \
+            -h "$DB_IPV4" \
             -p 5432 \
-            -U postgres \
+            -U postgres.iwajurvzxwcxtcokohfd \
             -d postgres \
             -v \
             -F p > backup_$(date +%Y%m%d).sql
