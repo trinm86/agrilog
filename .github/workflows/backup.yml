@@ -16,17 +16,19 @@ jobs:
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          # 1. Mã hóa mật khẩu (Tránh lỗi ký tự đặc biệt)
-          ENCODED_PASSWORD=$(node -e "console.log(encodeURIComponent(process.env.DB_PASSWORD))")
+          # 1. IP vật lý trực tiếp của Supabase Singapore (Không dùng tên miền để né IPv6)
+          # 2. Định dạng User bắt buộc: postgres.iwajurvzxwcxtcokohfd
           
-          # 2. Dùng Docker với Connection String URI chuẩn
-          # Chúng ta quay lại dùng Host trực tiếp nhưng ÉP cổng 5432 và dùng Docker để tunnel
-          # Quan trọng: User ở đây CHỈ LÀ postgres
           docker run --rm \
+            -e PGPASSWORD="$DB_PASSWORD" \
             postgres:15-alpine \
-            pg_dump "postgresql://postgres:$ENCODED_PASSWORD@db.iwajurvzxwcxtcokohfd.supabase.co:5432/postgres" \
-            -v \
-            -F p > backup_$(date +%Y%m%d).sql
+            pg_dump \
+              -h 15.197.142.173 \
+              -p 5432 \
+              -U "postgres.iwajurvzxwcxtcokohfd" \
+              -d postgres \
+              -v \
+              -F p > backup_$(date +%Y%m%d).sql
 
       - name: Upload Backup
         uses: actions/upload-artifact@v4
