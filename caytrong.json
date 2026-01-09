@@ -53,4 +53,4 @@
  {"id":165,"ngay_nhap":"26/10/2025","tieu_de":"npk 301010","don_gia":400000.0,"so_luong":1.0,"thanh_tien":400000.0,"loai_cay":"saurieng","loai_nhap":"mua","nam":"2026"}, 
  {"id":166,"ngay_nhap":"13/11/2025","tieu_de":"xịt rầy","don_gia":124000.0,"so_luong":1.0,"thanh_tien":124000.0,"loai_cay":"saurieng","loai_nhap":"mua","nam":"2026"}, 
  {"id":167,"ngay_nhap":"18/11/2025","tieu_de":"xịt nhện","don_gia":180000.0,"so_luong":1.0,"thanh_tien":180000.0,"loai_cay":"saurieng","loai_nhap":"mua","nam":"2026"}, 
- {"id":168,"ngay_nhap":"01/01/2026","tieu_de":"Cuộn dây ghép tự hủy","don_gia":26000.0,"so_luong":1.0,"thanh_tien":26000.0,"loai_cay":"khac","loai_nhap":"mua","nam":"2026"}]
+ {"id":168,"ngay_nhap":"01/01/2026","tieu_de":"Cuộn dây ghép tự hủy","don_gia":25000.0,"so_luong":1.0,"thanh_tien":25000.0,"loai_cay":"khac","loai_nhap":"mua","nam":"2026"}]
