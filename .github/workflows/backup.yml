@@ -15,20 +15,15 @@ jobs:
       - name: Run Backup
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          HOST: db.iwajurvzxwcxtcokohfd.supabase.co
         run: |
-          # 1. Lấy IPv4 bằng nslookup (Cực kỳ ổn định)
-          # Lệnh này lọc bỏ IPv6 và chỉ lấy dãy số IPv4
-          DB_IPV4=$(nslookup -type=A $HOST | grep -A 1 "Name:" | grep "Address:" | awk '{print $2}')
-          echo "Connecting to IPv4: $DB_IPV4"
+          # 1. Gán cứng IPv4 của server Supabase Singapore
+          # Điều này loại bỏ hoàn toàn lỗi DNS và IPv6
+          DB_IPV4="54.255.219.82"
+          
+          echo "Connecting directly to IPv4: $DB_IPV4"
 
-          # 2. Kiểm tra nếu IP trống thì dừng lại báo lỗi rõ ràng
-          if [ -z "$DB_IPV4" ]; then
-            echo "LỖI: Không tìm thấy địa chỉ IPv4. Kiểm tra lại PROJECT_ID."
-            exit 1
-          fi
-
-          # 3. Chạy dump (Dùng User postgres.PROJECT_ID để định danh)
+          # 2. Chạy pg_dump bằng Docker
+          # User: postgres.iwajurvzxwcxtcokohfd (Bắt buộc phải có Project ID sau dấu chấm)
           docker run --rm \
             -e PGPASSWORD="$DB_PASSWORD" \
             postgres:15-alpine \
@@ -37,6 +32,7 @@ jobs:
               -p 5432 \
               -U postgres.iwajurvzxwcxtcokohfd \
               -d postgres \
+              -v \
               -F p > backup_$(date +%Y%m%d).sql
 
       - name: Upload Backup
