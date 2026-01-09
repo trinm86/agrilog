@@ -45,5 +45,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: supabase-backup-file
-          path: backup_*.sql
+          path: caytrong_backup_*.sql
           retention-days: 30
