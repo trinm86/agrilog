@@ -19,14 +19,13 @@ jobs:
           # 1. Mã hóa mật khẩu
           ENCODED_PASSWORD=$(node -e "console.log(encodeURIComponent(process.env.DB_PASSWORD))")
           
-          # 2. Định dạng USER CHUẨN cho Pooler (Session Mode)
-          # Định dạng: [username].[project-ref].[mode]
-          # Đây là cách duy nhất để xóa lỗi "Tenant not found"
-          PROJECT_ID="iwajurvzxwcxtcokohfd"
-          DB_USER="postgres.${PROJECT_ID}.session"
+          # 2. ĐỊNH DẠNG USER PIPE: Đây là chìa khóa cuối cùng
+          # Một số cụm Supavisor yêu cầu định dạng: postgres|[PROJECT_REF]
+          PROJECT_REF="iwajurvzxwcxtcokohfd"
+          DB_USER="postgres|${PROJECT_REF}"
           DB_HOST="aws-0-ap-southeast-1.pooler.supabase.com"
 
-          echo "Đang backup qua Pooler Session Mode..."
+          echo "Đang thử kết nối Pooler với định dạng Pipe: $DB_USER"
 
           # 3. Sử dụng URI chuẩn với cổng 6543
           docker run --rm \
