@@ -34,11 +34,12 @@ jobs:
           docker run --rm \
             postgres:17-alpine \
             pg_dump "$CLEAN_URL" \
+            -t caytrong \
             --no-owner \
             --clean \
             --if-exists \
             -v \
-            -F p > backup_$(date +%Y%m%d).sql
+            -F p > caytrong_backup_$(date +%Y%m%d).sql
 
       - name: Save Backup to GitHub Artifacts
         uses: actions/upload-artifact@v4
