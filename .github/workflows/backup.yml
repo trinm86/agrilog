@@ -2,8 +2,8 @@ name: Weekly Supabase Backup
 
 on:
   schedule:
-    - cron: '0 0 * * 0'
-  workflow_dispatch: 
+    - cron: '0 0 * * 0' # Tự động chạy 00:00 Chủ Nhật hàng tuần
+  workflow_dispatch:      # Bấm nút chạy tay để kiểm tra ngay
 
 jobs:
   backup:
@@ -12,23 +12,34 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Backup
-        env:
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      # Bước này cài đặt Prisma ngay tại môi trường GitHub để đồng bộ hóa
+      - name: Setup Node.js and Prisma
         run: |
-          ENCODED_PASSWORD=$(node -e "console.log(encodeURIComponent(process.env.DB_PASSWORD))")
-          
-          # Dùng cổng 6543 và định dạng postgresql://
-          # Thử với Database Name là 'postgres'
-          # Nếu vẫn lỗi, bồ hãy thay chữ 'postgres' cuối cùng bằng 'iwajurvzxwcxtcokohfd'
-          DB_URI="postgresql://postgres.iwajurvzxwcxtcokohfd:${ENCODED_PASSWORD}@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1"
+          npm init -y
+          npm install prisma@5.13.0 @prisma/client@5.13.0
+          # Nếu bồ có file schema.prisma, nó sẽ generate client tại đây
+          if [ -f "prisma/schema.prisma" ]; then
+            npx prisma generate
+          fi
 
+      - name: Run Database Backup
+        env:
+          # Bồ dán chuỗi có &pgbouncer=true vào Secret tên là DATABASE_URL
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          echo "Đang kết nối và sao lưu dữ liệu qua Pooler..."
+          
+          # Sử dụng Docker để lấy công cụ pg_dump chuẩn
           docker run --rm \
             postgres:15-alpine \
-            pg_dump "$DB_URI" \
-            --no-owner -v -F p > backup_$(date +%Y%m%d).sql
+            pg_dump "$DATABASE_URL" \
+            --no-owner \
+            --clean \
+            --if-exists \
+            -v \
+            -F p > backup_$(date +%Y%m%d).sql
 
-      - name: Upload Backup
+      - name: Save Backup to GitHub Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: supabase-backup
