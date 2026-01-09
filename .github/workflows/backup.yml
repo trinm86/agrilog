@@ -2,8 +2,8 @@ name: Weekly Supabase Backup
 
 on:
   schedule:
-    - cron: '0 0 * * 0' # Chạy vào 00:00 Chủ Nhật hàng tuần
-  workflow_dispatch:      # Cho phép bấm chạy tay để test
+    - cron: '0 0 * * 0'
+  workflow_dispatch: 
 
 jobs:
   backup:
@@ -12,24 +12,36 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Backup via Supabase CLI
+      - name: Run Backup
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          PROJECT_ID: iwajurvzxwcxtcokohfd
         run: |
-          echo "Đang chuẩn bị backup cho dự án: $PROJECT_ID"
-          
-          # 1. Mã hóa mật khẩu để đảm bảo an toàn cho chuỗi URL
+          # 1. Mã hóa mật khẩu
           ENCODED_PASSWORD=$(node -e "console.log(encodeURIComponent(process.env.DB_PASSWORD))")
           
-          # 2. Tạo chuỗi DB_URL sử dụng Pooler (IPv4) để tránh lỗi mạng
-          # Định dạng này giúp CLI biết chính xác Tenant và vượt qua rào cản IPv6
-          DB_URL="postgresql://postgres.${PROJECT_ID}:${ENCODED_PASSWORD}@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"
+          # 2. ĐỊNH DẠNG USER ĐẶC BIỆT: Dùng dấu gạch đứng | thay vì dấu chấm
+          # Đây là cách để Supavisor (Pooler) không bị nhầm lẫn Tenant
+          # Cấu trúc: postgres.iwajurvzxwcxtcokohfd.session
+          USER="postgres.iwajurvzxwcxtcokohfd.session"
           
-          # 3. Chạy lệnh dump với flag --db-url chuẩn của bản CLI mới nhất
-          npx supabase db dump --db-url "$DB_URL" -f backup_$(date +%Y%m%d).sql
+          # 3. Dùng cổng 6543 và Host Pooler
+          HOST="aws-0-ap-southeast-1.pooler.supabase.com"
+          
+          echo "Đang backup qua cổng 6543 (Pooler Session Mode)..."
 
-      - name: Upload Backup Artifact
+          docker run --rm \
+            -e PGPASSWORD="$DB_PASSWORD" \
+            postgres:15-alpine \
+            pg_dump \
+              -h "$HOST" \
+              -p 6543 \
+              -U "$USER" \
+              -d postgres \
+              --no-owner \
+              -v \
+              -F p > backup_$(date +%Y%m%d).sql
+
+      - name: Upload Backup
         uses: actions/upload-artifact@v4
         with:
           name: supabase-backup
