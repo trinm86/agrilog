@@ -19,18 +19,18 @@ jobs:
           # 1. Mã hóa mật khẩu
           ENCODED_PASSWORD=$(node -e "console.log(encodeURIComponent(process.env.DB_PASSWORD))")
           
-          # 2. Cấu hình theo đúng logic Supavisor Pooler
-          # Một số cụm yêu cầu Database Name phải là Project ID để routing
-          HOST="aws-0-ap-southeast-1.pooler.supabase.com"
-          USER="postgres.iwajurvzxwcxtcokohfd"
-          DB_NAME="postgres" 
+          # 2. Định dạng USER đặc biệt cho Pooler Session Mode
+          # Một số cụm mới yêu cầu phải có đuôi .session
+          # Thử định dạng: postgres.iwajurvzxwcxtcokohfd.session
+          DB_USER="postgres.iwajurvzxwcxtcokohfd.session"
+          DB_HOST="aws-0-ap-southeast-1.pooler.supabase.com"
 
-          echo "Đang thử kết nối Pooler với định dạng Tenant mới..."
+          echo "Đang thử kết nối Pooler Session Mode với User: $DB_USER"
 
-          # 3. Chạy dump với URI chuẩn
+          # 3. Chạy dump bằng Connection URI
           docker run --rm \
             postgres:15-alpine \
-            pg_dump "postgresql://${USER}:${ENCODED_PASSWORD}@${HOST}:5432/${DB_NAME}" \
+            pg_dump "postgresql://${DB_USER}:${ENCODED_PASSWORD}@${DB_HOST}:5432/postgres" \
             --no-owner \
             -v \
             -F p > backup_$(date +%Y%m%d).sql
