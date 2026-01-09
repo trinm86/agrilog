@@ -15,23 +15,24 @@ jobs:
       - name: Run Backup
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          HOST: db.iwajurvzxwcxtcokohfd.supabase.co
         run: |
-          # 1. Tìm IPv4 thật của dự án bằng lệnh 'getent' của Linux
-          DB_IPV4=$(getent ahostsv4 "$HOST" | head -n1 | awk '{print $1}')
-          echo "Dectected IPv4: $DB_IPV4"
+          # 1. Gán cứng thông tin - Không dùng lệnh tìm kiếm tự động nữa
+          DB_HOST="db.iwajurvzxwcxtcokohfd.supabase.co"
+          DB_IPV4="15.197.142.173"
 
-          # 2. Dùng Docker và ÉP tên miền phải trỏ về IPv4 này
-          # Điều này giúp pg_dump dùng được tên miền (tránh lỗi Tenant) 
-          # nhưng lại chạy trên đường truyền IPv4 (tránh lỗi Network unreachable)
+          echo "Bắt đầu backup dự án: $DB_HOST qua IPv4: $DB_IPV4"
+
+          # 2. Chạy pg_dump bên trong Docker
+          # Dùng --add-host để "đánh lừa" Docker đi thẳng vào IPv4
+          # Dùng định dạng User chuẩn: postgres.iwajurvzxwcxtcokohfd
           docker run --rm \
-            --add-host "$HOST:$DB_IPV4" \
+            --add-host "$DB_HOST:$DB_IPV4" \
             -e PGPASSWORD="$DB_PASSWORD" \
             postgres:15-alpine \
             pg_dump \
-              -h "$HOST" \
+              -h "$DB_HOST" \
               -p 5432 \
-              -U "postgres" \
+              -U "postgres.iwajurvzxwcxtcokohfd" \
               -d postgres \
               -v \
               -F p > backup_$(date +%Y%m%d).sql
