@@ -16,30 +16,23 @@ jobs:
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          # 1. Mã hóa mật khẩu
+          # 1. Mã hóa mật khẩu để đưa vào chuỗi URI
           ENCODED_PASSWORD=$(node -e "console.log(encodeURIComponent(process.env.DB_PASSWORD))")
           
-          # 2. ĐỊNH DẠNG USER ĐẶC BIỆT: Dùng dấu gạch đứng | thay vì dấu chấm
-          # Đây là cách để Supavisor (Pooler) không bị nhầm lẫn Tenant
-          # Cấu trúc: postgres.iwajurvzxwcxtcokohfd.session
-          USER="postgres.iwajurvzxwcxtcokohfd.session"
-          
-          # 3. Dùng cổng 6543 và Host Pooler
-          HOST="aws-0-ap-southeast-1.pooler.supabase.com"
-          
-          echo "Đang backup qua cổng 6543 (Pooler Session Mode)..."
+          # 2. Định dạng USER PIPE đặc biệt: [user]|[project_ref]
+          # Lưu ý: Dấu gạch đứng '|' giúp Pooler định tuyến chính xác 100%
+          DB_USER="postgres|iwajurvzxwcxtcokohfd"
+          DB_HOST="aws-0-ap-southeast-1.pooler.supabase.com"
 
+          echo "Đang backup qua cổng 6543 dùng định dạng User Pipe..."
+
+          # 3. Sử dụng URI thay vì tham số rời để tránh mất thông tin Tenant
           docker run --rm \
-            -e PGPASSWORD="$DB_PASSWORD" \
             postgres:15-alpine \
-            pg_dump \
-              -h "$HOST" \
-              -p 6543 \
-              -U "$USER" \
-              -d postgres \
-              --no-owner \
-              -v \
-              -F p > backup_$(date +%Y%m%d).sql
+            pg_dump "postgresql://${DB_USER}:${ENCODED_PASSWORD}@${DB_HOST}:6543/postgres" \
+            --no-owner \
+            -v \
+            -F p > backup_$(date +%Y%m%d).sql
 
       - name: Upload Backup
         uses: actions/upload-artifact@v4
