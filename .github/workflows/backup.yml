@@ -29,7 +29,7 @@ jobs:
           # 3. Sử dụng URI thay vì tham số rời để tránh mất thông tin Tenant
           docker run --rm \
             postgres:15-alpine \
-            pg_dump "postgresql://postgres:${ENCODED_PASSWORD}@db.iwajurvzxwcxtcokohfd.supabase.co:6543/postgres" \
+            pg_dump "postgresql://postgres:${process.env.DB_PASSWORD}@db.iwajurvzxwcxtcokohfd.supabase.co:6543/postgres" \
             --no-owner \
             -v \
             -F p > backup_$(date +%Y%m%d).sql
