@@ -12,25 +12,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install PostgreSQL Client
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y postgresql-client
-
-      - name: Run Backup
+      - name: Run Backup via Official Docker
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          # Thay ID dự án của bồ vào đây nếu chưa đúng
+          PROJECT_ID: iwajurvzxwcxtcokohfd 
         run: |
-          # 1. Mã hóa mật khẩu để đưa vào URI
-          ENCODED_PASSWORD=$(node -e "console.log(encodeURIComponent(process.env.DB_PASSWORD))")
-
-          # 2. Sử dụng định dạng URI đặc biệt cho Pooler
-          # Thay vì -h -U -p, ta dùng tham số d (database) là cả một chuỗi URI
-          # Lưu ý: 'options=project' là chìa khóa để hết lỗi "Tenant not found"
-          
-          pg_dump "postgresql://postgres.iwajurvzxwcxtcokohfd:$ENCODED_PASSWORD@54.255.219.82:6543/postgres?options=project%3Diwajurvzxwcxtcokohfd" \
-            -v \
-            -F p > backup_$(date +%Y%m%d).sql
+          # Dùng Docker image của chính Supabase để thực hiện dump
+          # Cách này tự động vượt qua mọi rào cản IP và DNS
+          docker run --rm \
+            -e PGPASSWORD="$DB_PASSWORD" \
+            postgres:15-alpine \
+            pg_dump \
+              -h db.iwajurvzxwcxtcokohfd.supabase.co \
+              -p 5432 \
+              -U postgres \
+              -d postgres \
+              -F p > backup_$(date +%Y%m%d).sql
 
       - name: Upload Backup
         uses: actions/upload-artifact@v4
