@@ -35,6 +35,10 @@ jobs:
             postgres:17-alpine \
             psql "$CLEAN_URL" -t -A -c "SELECT COALESCE(json_agg(t), '[]'::json) FROM (SELECT * FROM caytrong) t" > caytrong.json
 
+          # 3. Tạo bản sao có đính kèm ngày tháng
+          # File này sẽ có tên dạng: caytrong_20260109.json
+          cp caytrong.json "caytrong_$(date +%Y%m%d).json"
+          
       - name: Commit and Push changes
         run: |
           # Cấu hình user để GitHub biết ai là người commit
@@ -42,10 +46,10 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
           # Kiểm tra xem file có thay đổi không để tránh lỗi commit trống
-          git add caytrong.json
+          git add caytrong.json caytrong_*.json
           if git diff --staged --quiet; then
             echo "Dữ liệu không có thay đổi, bỏ qua commit."
           else
-            git commit -m "Update caytrong.json [$(date +'%Y-%m-%d %H:%M:%S')]"
+            git commit -m "Update caytrong data [$(date +'%Y-%m-%d %H:%M:%S')]"
             git push origin main
           fi
