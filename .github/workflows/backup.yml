@@ -2,8 +2,8 @@ name: Weekly Supabase Backup
 
 on:
   schedule:
-    - cron: '0 0 * * 0' # Tự chạy mỗi Chủ Nhật
-  workflow_dispatch:      # Bấm nút chạy tay để test ngay
+    - cron: '0 0 * * 0' # Tự động chạy 00:00 Chủ Nhật hàng tuần
+  workflow_dispatch:      # Bấm nút chạy tay để kiểm tra ngay
 
 jobs:
   backup:
@@ -12,19 +12,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Bước này cài đặt Prisma ngay tại môi trường GitHub để đồng bộ hóa
+      - name: Setup Node.js and Prisma
+        run: |
+          npm init -y
+          npm install prisma@5.13.0 @prisma/client@5.13.0
+          # Nếu bồ có file schema.prisma, nó sẽ generate client tại đây
+          if [ -f "prisma/schema.prisma" ]; then
+            npx prisma generate
+          fi
+
       - name: Run Database Backup
         env:
-          # Chuỗi này bồ cứ để nguyên có &pgbouncer=true trong GitHub Secret
+          # Bồ dán chuỗi có &pgbouncer=true vào Secret tên là DATABASE_URL
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          echo "Đang xử lý chuỗi kết nối và backup..."
-          
-          # Lệnh này sẽ xóa bỏ tham số pgbouncer khỏi chuỗi URL để pg_dump không báo lỗi
-          # Nhưng vẫn giữ nguyên các thông tin Tenant và Password quan trọng
           CLEAN_URL=$(echo $DATABASE_URL | sed 's/[?&]pgbouncer=true//g')
+          echo "Đang kết nối và sao lưu dữ liệu qua Pooler..."
           
-          echo "Bắt đầu backup từ Supabase Pooler (Cổng 6543)..."
-          
+          # Sử dụng Docker để lấy công cụ pg_dump chuẩn
           docker run --rm \
             postgres:15-alpine \
             pg_dump "$CLEAN_URL" \
