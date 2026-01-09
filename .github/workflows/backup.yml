@@ -33,12 +33,19 @@ jobs:
           
           docker run --rm \
             postgres:17-alpine \
-            psql "$CLEAN_URL" -c "COPY (SELECT COALESCE(json_agg(t), '[]'::json) FROM (SELECT * FROM caytrong) t) TO STDOUT" > caytrong_.json
+            psql "$CLEAN_URL" -c "COPY (SELECT COALESCE(json_agg(t), '[]'::json) FROM (SELECT * FROM caytrong) t) TO STDOUT" > caytrong.json
 
-      - name: Save Backup to GitHub Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: caytrong-json-only
-          path: caytrong.json
-          if-no-files-found: error
-          retention-days: 30
+      - name: Commit and Push changes
+        run: |
+          # Cấu hình user để GitHub biết ai là người commit
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Kiểm tra xem file có thay đổi không để tránh lỗi commit trống
+          git add caytrong.json
+          if git diff --staged --quiet; then
+            echo "Dữ liệu không có thay đổi, bỏ qua commit."
+          else
+            git commit -m "Update caytrong.json [$(date +'%Y-%m-%d %H:%M:%S')]"
+            git push origin main
+          fi
