@@ -12,18 +12,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Backup (Forced IPv4)
+      - name: Run Backup
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           HOST: db.iwajurvzxwcxtcokohfd.supabase.co
         run: |
-          # 1. Lấy địa chỉ IPv4 thật của server (Bỏ qua IPv6)
-          # Chúng ta dùng 'getent' để hỏi hệ thống địa chỉ IPv4 (A record)
-          DB_IPV4=$(getent ahosts "$HOST" | grep RAW | grep -v ":" | awk '{print $1}' | head -n 1)
-          echo "Dectected IPv4: $DB_IPV4"
+          # 1. Lấy IPv4 bằng nslookup (Cực kỳ ổn định)
+          # Lệnh này lọc bỏ IPv6 và chỉ lấy dãy số IPv4
+          DB_IPV4=$(nslookup -type=A $HOST | grep -A 1 "Name:" | grep "Address:" | awk '{print $2}')
+          echo "Connecting to IPv4: $DB_IPV4"
 
-          # 2. Chạy dump thông qua IP vừa tìm được
-          # Phải dùng User dạng postgres.PROJECT_ID để Supabase nhận diện khi dùng IP
+          # 2. Kiểm tra nếu IP trống thì dừng lại báo lỗi rõ ràng
+          if [ -z "$DB_IPV4" ]; then
+            echo "LỖI: Không tìm thấy địa chỉ IPv4. Kiểm tra lại PROJECT_ID."
+            exit 1
+          fi
+
+          # 3. Chạy dump (Dùng User postgres.PROJECT_ID để định danh)
           docker run --rm \
             -e PGPASSWORD="$DB_PASSWORD" \
             postgres:15-alpine \
