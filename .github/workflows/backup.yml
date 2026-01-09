@@ -15,19 +15,26 @@ jobs:
       - name: Run Backup
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          PROJECT_ID: iwajurvzxwcxtcokohfd
+          HOST: db.iwajurvzxwcxtcokohfd.supabase.co
         run: |
-          # 1. Cài đặt Supabase CLI bản ổn định
-          npm install @supabase/cli@1.150.0
-          
-          # 2. Mã hóa mật khẩu
-          ENCODED_PASSWORD=$(node -e "console.log(encodeURIComponent(process.env.DB_PASSWORD))")
-          
-          # 3. Sử dụng lệnh dump trực tiếp với Connection String (Ép dùng IPv4 của Pooler)
-          # Đây là cách CLI tự cấu hình mọi tham số Tenant cho bồ
-          npx supabase db dump \
-            --db-url "postgresql://postgres:$ENCODED_PASSWORD@db.iwajurvzxwcxtcokohfd.supabase.co:5432/postgres" \
-            -f backup_$(date +%Y%m%d).sql
+          # 1. Tìm IPv4 thật của dự án bằng lệnh 'getent' của Linux
+          DB_IPV4=$(getent ahostsv4 "$HOST" | head -n1 | awk '{print $1}')
+          echo "Dectected IPv4: $DB_IPV4"
+
+          # 2. Dùng Docker và ÉP tên miền phải trỏ về IPv4 này
+          # Điều này giúp pg_dump dùng được tên miền (tránh lỗi Tenant) 
+          # nhưng lại chạy trên đường truyền IPv4 (tránh lỗi Network unreachable)
+          docker run --rm \
+            --add-host "$HOST:$DB_IPV4" \
+            -e PGPASSWORD="$DB_PASSWORD" \
+            postgres:15-alpine \
+            pg_dump \
+              -h "$HOST" \
+              -p 5432 \
+              -U "postgres" \
+              -d postgres \
+              -v \
+              -F p > backup_$(date +%Y%m%d).sql
 
       - name: Upload Backup
         uses: actions/upload-artifact@v4
