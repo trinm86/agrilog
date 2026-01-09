@@ -33,7 +33,7 @@ jobs:
           
           docker run --rm \
             postgres:17-alpine \
-            psql "$CLEAN_URL" -t -A -c "COPY (SELECT COALESCE(json_agg(t), '[]'::json) FROM (SELECT * FROM caytrong) t) TO STDOUT" > caytrong.json
+            psql "$CLEAN_URL" -t -A -c "SELECT COALESCE(json_agg(t), '[]'::json) FROM (SELECT * FROM caytrong) t" > caytrong.json
 
       - name: Commit and Push changes
         run: |
