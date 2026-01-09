@@ -16,17 +16,17 @@ jobs:
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          # 1. Định dạng Host Pooler chuẩn IPv4 từ tài liệu bồ gửi
-          # Thay [REGION] bằng vùng của bồ (thường là ap-southeast-1 cho Singapore)
-          # Nếu không chắc, bồ có thể vào Dashboard -> Connect -> Pooler để lấy host chuẩn
+          # 1. Host Pooler chuẩn IPv4 (Đã thông mạng!)
           DB_POOLER_HOST="aws-0-ap-southeast-1.pooler.supabase.com"
           
-          # 2. Định dạng User bắt buộc cho Pooler: [user].[project-ref]
+          # 2. FULL USERNAME: Phải là postgres.[PROJECT_REF]
+          # Đây là chìa khóa để hết lỗi "Tenant not found"
           DB_USER="postgres.iwajurvzxwcxtcokohfd"
 
-          echo "Connecting to Pooler IPv4: $DB_POOLER_HOST"
+          echo "Đang kết nối tới Pooler với User: $DB_USER"
 
-          # 3. Chạy pg_dump qua cổng 5432 của Pooler
+          # 3. Chạy pg_dump
+          # Thêm --no-owner để file backup sạch sẽ hơn
           docker run --rm \
             -e PGPASSWORD="$DB_PASSWORD" \
             postgres:15-alpine \
@@ -35,6 +35,7 @@ jobs:
               -p 5432 \
               -U "$DB_USER" \
               -d postgres \
+              --no-owner \
               -v \
               -F p > backup_$(date +%Y%m%d).sql
 
