@@ -16,20 +16,23 @@ jobs:
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          # 1. Mã hóa mật khẩu để đưa vào chuỗi URI
+          # 1. Mã hóa mật khẩu
           ENCODED_PASSWORD=$(node -e "console.log(encodeURIComponent(process.env.DB_PASSWORD))")
           
-          # 2. Định dạng USER PIPE đặc biệt: [user]|[project_ref]
-          # Lưu ý: Dấu gạch đứng '|' giúp Pooler định tuyến chính xác 100%
-          DB_USER="postgres|iwajurvzxwcxtcokohfd"
-          DB_HOST="aws-0-ap-southeast-1.pooler.supabase.com"
+          # 2. Thông số kết nối (Dùng Pooler Host để né IPv6)
+          PROJECT_ID="iwajurvzxwcxtcokohfd"
+          HOST="aws-0-ap-southeast-1.pooler.supabase.com"
+          
+          # Định dạng User chuẩn cho Supavisor: postgres.[PROJECT_ID]
+          # Lưu ý: Bắt buộc có tiền tố postgresql://
+          DB_URI="postgresql://postgres.${PROJECT_ID}:${ENCODED_PASSWORD}@${HOST}:6543/postgres"
 
-          echo "Đang backup qua cổng 6543 dùng định dạng User Pipe..."
+          echo "Đang khởi động pg_dump kết nối tới Supabase Pooler..."
 
-          # 3. Sử dụng URI thay vì tham số rời để tránh mất thông tin Tenant
+          # 3. Chạy Docker với URI chuẩn
           docker run --rm \
             postgres:15-alpine \
-            pg_dump "postgres:${ENCODED_PASSWORD}@db.iwajurvzxwcxtcokohfd.supabase.co:6543/postgres" \
+            pg_dump "$DB_URI" \
             --no-owner \
             -v \
             -F p > backup_$(date +%Y%m%d).sql
