@@ -16,28 +16,22 @@ jobs:
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          # 1. Host Pooler chuẩn IPv4 (Đã thông mạng!)
-          DB_POOLER_HOST="aws-0-ap-southeast-1.pooler.supabase.com"
+          # 1. Mã hóa mật khẩu (đề phòng có ký tự lạ)
+          ENCODED_PASSWORD=$(node -e "console.log(encodeURIComponent(process.env.DB_PASSWORD))")
           
-          # 2. FULL USERNAME: Phải là postgres.[PROJECT_REF]
-          # Đây là chìa khóa để hết lỗi "Tenant not found"
-          DB_USER="postgres.iwajurvzxwcxtcokohfd"
+          # 2. Host và Project Ref của bồ
+          POOLER_HOST="aws-0-ap-southeast-1.pooler.supabase.com"
+          PROJECT_REF="iwajurvzxwcxtcokohfd"
 
-          echo "Đang kết nối tới Pooler với User: $DB_USER"
-
-          # 3. Chạy pg_dump
-          # Thêm --no-owner để file backup sạch sẽ hơn
+          # 3. Sử dụng URI chuẩn cho Pooler Session Mode
+          # Định dạng: postgresql://postgres.[PROJECT_REF]:[PASSWORD]@[HOST]:5432/postgres
+          
           docker run --rm \
-            -e PGPASSWORD="$DB_PASSWORD" \
             postgres:15-alpine \
-            pg_dump \
-              -h "$DB_POOLER_HOST" \
-              -p 5432 \
-              -U "$DB_USER" \
-              -d postgres \
-              --no-owner \
-              -v \
-              -F p > backup_$(date +%Y%m%d).sql
+            pg_dump "postgresql://postgres.${PROJECT_REF}:${ENCODED_PASSWORD}@${POOLER_HOST}:5432/postgres" \
+            --no-owner \
+            -v \
+            -F p > backup_$(date +%Y%m%d).sql
 
       - name: Upload Backup
         uses: actions/upload-artifact@v4
