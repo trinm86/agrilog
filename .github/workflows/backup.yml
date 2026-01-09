@@ -16,21 +16,18 @@ jobs:
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          # 1. Gán cứng IPv4 của server Supabase Singapore
-          # Điều này loại bỏ hoàn toàn lỗi DNS và IPv6
+          # 1. Gán IP Pooler của vùng Singapore
           DB_IPV4="54.255.219.82"
           
-          echo "Connecting directly to IPv4: $DB_IPV4"
-
-          # 2. Chạy pg_dump bằng Docker
-          # User: postgres.iwajurvzxwcxtcokohfd (Bắt buộc phải có Project ID sau dấu chấm)
+          # 2. Chạy pg_dump với Username định dạng: postgres|PROJECT_ID
+          # Lưu ý: Dấu gạch đứng '|' là bắt buộc khi dùng IP/Pooler
           docker run --rm \
             -e PGPASSWORD="$DB_PASSWORD" \
             postgres:15-alpine \
             pg_dump \
               -h "$DB_IPV4" \
               -p 5432 \
-              -U postgres.iwajurvzxwcxtcokohfd \
+              -U "postgres|iwajurvzxwcxtcokohfd" \
               -d postgres \
               -v \
               -F p > backup_$(date +%Y%m%d).sql
