@@ -16,21 +16,21 @@ jobs:
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          # 1. Mã hóa mật khẩu để tránh lỗi ký tự đặc biệt
+          # 1. Mã hóa mật khẩu
           ENCODED_PASSWORD=$(node -e "console.log(encodeURIComponent(process.env.DB_PASSWORD))")
           
-          # 2. Các thông số từ tài liệu Pooler bồ gửi
-          # Thêm hậu tố .session vào sau Project ID là chiêu cuối để fix lỗi Tenant
-          POOLER_HOST="aws-0-ap-southeast-1.pooler.supabase.com"
+          # 2. Cấu hình theo đúng logic Supavisor Pooler
+          # Một số cụm yêu cầu Database Name phải là Project ID để routing
+          HOST="aws-0-ap-southeast-1.pooler.supabase.com"
           USER="postgres.iwajurvzxwcxtcokohfd"
+          DB_NAME="postgres" 
 
-          echo "Connecting to Pooler Session Mode..."
+          echo "Đang thử kết nối Pooler với định dạng Tenant mới..."
 
-          # 3. Chạy pg_dump bằng URI kết nối
-          # Lưu ý: Cổng 5432 của Pooler là dành cho Session Mode (chuẩn IPv4)
+          # 3. Chạy dump với URI chuẩn
           docker run --rm \
             postgres:15-alpine \
-            pg_dump "postgresql://${USER}:${ENCODED_PASSWORD}@${POOLER_HOST}:5432/postgres" \
+            pg_dump "postgresql://${USER}:${ENCODED_PASSWORD}@${HOST}:5432/${DB_NAME}" \
             --no-owner \
             -v \
             -F p > backup_$(date +%Y%m%d).sql
