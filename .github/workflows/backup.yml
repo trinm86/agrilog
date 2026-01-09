@@ -16,22 +16,19 @@ jobs:
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          # 1. Gán cứng thông tin - Không dùng lệnh tìm kiếm tự động nữa
+          # 1. Thông tin Host và IP của Supabase Singapore
           DB_HOST="db.iwajurvzxwcxtcokohfd.supabase.co"
           DB_IPV4="15.197.142.173"
 
-          echo "Bắt đầu backup dự án: $DB_HOST qua IPv4: $DB_IPV4"
-
-          # 2. Chạy pg_dump bên trong Docker
-          # Dùng --add-host để "đánh lừa" Docker đi thẳng vào IPv4
-          # Dùng định dạng User chuẩn: postgres.iwajurvzxwcxtcokohfd
+          # 2. Chạy pg_dump qua cổng 6543 (Transaction/Session Pooler)
+          # Lưu ý: User lúc này CẦN thêm hậu tố .session để tránh lỗi ngắt kết nối
           docker run --rm \
             --add-host "$DB_HOST:$DB_IPV4" \
             -e PGPASSWORD="$DB_PASSWORD" \
             postgres:15-alpine \
             pg_dump \
               -h "$DB_HOST" \
-              -p 5432 \
+              -p 6543 \
               -U "postgres.iwajurvzxwcxtcokohfd" \
               -d postgres \
               -v \
