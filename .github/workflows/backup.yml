@@ -33,7 +33,7 @@ jobs:
           
           docker run --rm \
             postgres:17-alpine \
-            psql "$CLEAN_URL" -c "COPY (SELECT COALESCE(json_agg(t), '[]'::json) FROM (SELECT * FROM caytrong) t) TO STDOUT" > caytrong_data.json
+            psql "$CLEAN_URL" -c "COPY (SELECT COALESCE(json_agg(t), '[]'::json) FROM (SELECT * FROM caytrong) t) TO STDOUT" > caytrong_.json
 
       - name: Save Backup to GitHub Artifacts
         uses: actions/upload-artifact@v4
