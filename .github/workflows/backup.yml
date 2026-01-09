@@ -15,25 +15,19 @@ jobs:
       - name: Run Backup
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          PROJECT_ID: iwajurvzxwcxtcokohfd
         run: |
-          # 1. Sử dụng IP của AWS Global Accelerator (Dành cho Supabase)
-          # IP này hỗ trợ IPv4 ổn định nhất cho kết nối xuyên quốc gia
-          DB_IP="15.197.142.173" 
+          # 1. Cài đặt Supabase CLI bản ổn định
+          npm install @supabase/cli@1.150.0
           
-          # 2. Sử dụng cổng 6543 (Pooler) để vượt qua Firewall của Supabase
-          # 3. USERNAME ĐẶC BIỆT: Phải có hậu tố .session để giữ kết nối ổn định
-          # Định dạng: postgres.iwajurvzxwcxtcokohfd
+          # 2. Mã hóa mật khẩu
+          ENCODED_PASSWORD=$(node -e "console.log(encodeURIComponent(process.env.DB_PASSWORD))")
           
-          docker run --rm \
-            -e PGPASSWORD="$DB_PASSWORD" \
-            postgres:15-alpine \
-            pg_dump \
-              -h "$DB_IP" \
-              -p 6543 \
-              -U "postgres.iwajurvzxwcxtcokohfd" \
-              -d postgres \
-              -v \
-              -F p > backup_$(date +%Y%m%d).sql
+          # 3. Sử dụng lệnh dump trực tiếp với Connection String (Ép dùng IPv4 của Pooler)
+          # Đây là cách CLI tự cấu hình mọi tham số Tenant cho bồ
+          npx supabase db dump \
+            --db-url "postgresql://postgres:$ENCODED_PASSWORD@db.iwajurvzxwcxtcokohfd.supabase.co:5432/postgres" \
+            -f backup_$(date +%Y%m%d).sql
 
       - name: Upload Backup
         uses: actions/upload-artifact@v4
