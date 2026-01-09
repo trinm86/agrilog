@@ -16,20 +16,24 @@ jobs:
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          # 1. Thông tin Host và IP của Supabase Singapore
-          DB_HOST="db.iwajurvzxwcxtcokohfd.supabase.co"
-          DB_IPV4="15.197.142.173"
+          # 1. Định dạng Host Pooler chuẩn IPv4 từ tài liệu bồ gửi
+          # Thay [REGION] bằng vùng của bồ (thường là ap-southeast-1 cho Singapore)
+          # Nếu không chắc, bồ có thể vào Dashboard -> Connect -> Pooler để lấy host chuẩn
+          DB_POOLER_HOST="aws-0-ap-southeast-1.pooler.supabase.com"
+          
+          # 2. Định dạng User bắt buộc cho Pooler: [user].[project-ref]
+          DB_USER="postgres.iwajurvzxwcxtcokohfd"
 
-          # 2. Chạy pg_dump qua cổng 6543 (Transaction/Session Pooler)
-          # Lưu ý: User lúc này CẦN thêm hậu tố .session để tránh lỗi ngắt kết nối
+          echo "Connecting to Pooler IPv4: $DB_POOLER_HOST"
+
+          # 3. Chạy pg_dump qua cổng 5432 của Pooler
           docker run --rm \
-            --add-host "$DB_HOST:$DB_IPV4" \
             -e PGPASSWORD="$DB_PASSWORD" \
             postgres:15-alpine \
             pg_dump \
-              -h "$DB_HOST" \
-              -p 6543 \
-              -U "postgres.iwajurvzxwcxtcokohfd" \
+              -h "$DB_POOLER_HOST" \
+              -p 5432 \
+              -U "$DB_USER" \
               -d postgres \
               -v \
               -F p > backup_$(date +%Y%m%d).sql
