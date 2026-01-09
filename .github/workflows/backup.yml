@@ -16,15 +16,20 @@ jobs:
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          # 1. IP vật lý trực tiếp của Supabase Singapore (Không dùng tên miền để né IPv6)
-          # 2. Định dạng User bắt buộc: postgres.iwajurvzxwcxtcokohfd
+          # 1. Sử dụng IP của AWS Global Accelerator (Dành cho Supabase)
+          # IP này hỗ trợ IPv4 ổn định nhất cho kết nối xuyên quốc gia
+          DB_IP="15.197.142.173" 
+          
+          # 2. Sử dụng cổng 6543 (Pooler) để vượt qua Firewall của Supabase
+          # 3. USERNAME ĐẶC BIỆT: Phải có hậu tố .session để giữ kết nối ổn định
+          # Định dạng: postgres.iwajurvzxwcxtcokohfd
           
           docker run --rm \
             -e PGPASSWORD="$DB_PASSWORD" \
             postgres:15-alpine \
             pg_dump \
-              -h 15.197.142.173 \
-              -p 5432 \
+              -h "$DB_IP" \
+              -p 6543 \
               -U "postgres.iwajurvzxwcxtcokohfd" \
               -d postgres \
               -v \
