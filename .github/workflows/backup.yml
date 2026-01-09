@@ -19,20 +19,19 @@ jobs:
           # 1. Mã hóa mật khẩu
           ENCODED_PASSWORD=$(node -e "console.log(encodeURIComponent(process.env.DB_PASSWORD))")
           
-          # 2. Thông số kết nối (Dùng Pooler Host để né IPv6)
+          # 2. Định dạng USER CHUẨN cho Pooler (Session Mode)
+          # Định dạng: [username].[project-ref].[mode]
+          # Đây là cách duy nhất để xóa lỗi "Tenant not found"
           PROJECT_ID="iwajurvzxwcxtcokohfd"
-          HOST="aws-0-ap-southeast-1.pooler.supabase.com"
-          
-          # Định dạng User chuẩn cho Supavisor: postgres.[PROJECT_ID]
-          # Lưu ý: Bắt buộc có tiền tố postgresql://
-          DB_URI="postgresql://postgres.${PROJECT_ID}:${ENCODED_PASSWORD}@${HOST}:6543/postgres"
+          DB_USER="postgres.${PROJECT_ID}.session"
+          DB_HOST="aws-0-ap-southeast-1.pooler.supabase.com"
 
-          echo "Đang khởi động pg_dump kết nối tới Supabase Pooler..."
+          echo "Đang backup qua Pooler Session Mode..."
 
-          # 3. Chạy Docker với URI chuẩn
+          # 3. Sử dụng URI chuẩn với cổng 6543
           docker run --rm \
             postgres:15-alpine \
-            pg_dump "$DB_URI" \
+            pg_dump "postgresql://${DB_USER}:${ENCODED_PASSWORD}@${DB_HOST}:6543/postgres" \
             --no-owner \
             -v \
             -F p > backup_$(date +%Y%m%d).sql
