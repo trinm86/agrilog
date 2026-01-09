@@ -21,7 +21,7 @@ jobs:
           # Dùng cổng 6543 và định dạng postgresql://
           # Thử với Database Name là 'postgres'
           # Nếu vẫn lỗi, bồ hãy thay chữ 'postgres' cuối cùng bằng 'iwajurvzxwcxtcokohfd'
-          DB_URI="postgresql://postgres.iwajurvzxwcxtcokohfd:${ENCODED_PASSWORD}@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
+          DB_URI="postgresql://postgres.iwajurvzxwcxtcokohfd:${ENCODED_PASSWORD}@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1"
 
           docker run --rm \
             postgres:15-alpine \
