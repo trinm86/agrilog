@@ -16,21 +16,17 @@ jobs:
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          # 1. Gán IP Pooler của vùng Singapore
-          DB_IPV4="54.255.219.82"
+          # 1. Mã hóa mật khẩu (Tránh lỗi ký tự đặc biệt)
+          ENCODED_PASSWORD=$(node -e "console.log(encodeURIComponent(process.env.DB_PASSWORD))")
           
-          # 2. Chạy pg_dump với Username định dạng: postgres|PROJECT_ID
-          # Lưu ý: Dấu gạch đứng '|' là bắt buộc khi dùng IP/Pooler
+          # 2. Dùng Docker với Connection String URI chuẩn
+          # Chúng ta quay lại dùng Host trực tiếp nhưng ÉP cổng 5432 và dùng Docker để tunnel
+          # Quan trọng: User ở đây CHỈ LÀ postgres
           docker run --rm \
-            -e PGPASSWORD="$DB_PASSWORD" \
             postgres:15-alpine \
-            pg_dump \
-              -h "$DB_IPV4" \
-              -p 5432 \
-              -U "postgres|iwajurvzxwcxtcokohfd" \
-              -d postgres \
-              -v \
-              -F p > backup_$(date +%Y%m%d).sql
+            pg_dump "postgresql://postgres:$ENCODED_PASSWORD@db.iwajurvzxwcxtcokohfd.supabase.co:5432/postgres" \
+            -v \
+            -F p > backup_$(date +%Y%m%d).sql
 
       - name: Upload Backup
         uses: actions/upload-artifact@v4
