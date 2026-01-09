@@ -17,11 +17,17 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           PROJECT_ID: iwajurvzxwcxtcokohfd
         run: |
-          echo "Đang bắt đầu backup cho dự án: $PROJECT_ID"
+          echo "Đang chuẩn bị backup cho dự án: $PROJECT_ID"
           
-          # Sử dụng npx để chạy Supabase CLI mà không cần cài đặt rườm rà
-          # Lệnh 'db dump' của CLI sẽ tự động xử lý mọi rào cản mạng (IPv4/IPv6)
-          npx supabase db dump --project-ref "$PROJECT_ID" --password "$DB_PASSWORD" -f backup_$(date +%Y%m%d).sql
+          # 1. Mã hóa mật khẩu để đảm bảo an toàn cho chuỗi URL
+          ENCODED_PASSWORD=$(node -e "console.log(encodeURIComponent(process.env.DB_PASSWORD))")
+          
+          # 2. Tạo chuỗi DB_URL sử dụng Pooler (IPv4) để tránh lỗi mạng
+          # Định dạng này giúp CLI biết chính xác Tenant và vượt qua rào cản IPv6
+          DB_URL="postgresql://postgres.${PROJECT_ID}:${ENCODED_PASSWORD}@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"
+          
+          # 3. Chạy lệnh dump với flag --db-url chuẩn của bản CLI mới nhất
+          npx supabase db dump --db-url "$DB_URL" -f backup_$(date +%Y%m%d).sql
 
       - name: Upload Backup Artifact
         uses: actions/upload-artifact@v4
