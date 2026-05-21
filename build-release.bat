@@ -1,1 +1,0 @@
-flutter build apk --no-tree-shake-icons --release --build-name=1.0.0.2 --split-per-abi
