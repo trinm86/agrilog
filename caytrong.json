@@ -143,7 +143,8 @@
  {"id":222,"ngay_nhap":"05/04/2026","tieu_de":"mkp","don_gia":69000.0,"so_luong":1.0,"thanh_tien":69000.0,"loai_cay":"saurieng","loai_nhap":"mua","nam":"2026"}, 
  {"id":113,"ngay_nhap":"26/11/2025","tieu_de":"Cà phê","don_gia":1.0,"so_luong":400.0,"thanh_tien":400.0,"loai_cay":"caphe","loai_nhap":"ban","nam":"2025"}, 
  {"id":302,"ngay_nhap":"19/08/2026","tieu_de":"Cà phê kinh doanh thì 1 năm từ 5-6 đợt phân hoá học, 1 lần phân chuồng : \n* Đợt 1 là tưới lần 2 sau tưới nước lần 1 ép bông ( 20-5-5+TE) 1 cây 300gr\n* Đợt 2 khi trái cà bằng quả tiêu nên đi phân 30-10-10 cây 200 gr sau khi được 15 ngày bỏ 1 cữ phân chuồng, phân bò hay gà cũng được nhưng phải ủ hoai mục, hon nên bỏ phân còn tươi\n* Đợt 3 khi trái cà bằng đầu đũa ăn com bỏ 16-16-8 1 cây 300gr \n* Đợt 4 khi quả to bằng ngón tay thì đi 3 số 16 cây 400-500 gr\n* Đợt 5 giai đoạn vào nhân và tạo mầm hoa bỏ 17-7-17 \n* Đợt 6 sau khi bỏ đợt 5 được 1 tháng thì bỏ lân để phân hoá mầm hoa sau 1 tháng thì tưới nước lần 1 để ép bông.","don_gia":0.0,"so_luong":1.0,"thanh_tien":0.0,"loai_cay":"ghichu","loai_nhap":"mua","nam":"2026"}, 
- {"id":237,"ngay_nhap":"11/09/2026","tieu_de":"future     56000 - nhớt máy\nvision     82000 - nhớt máy (lần 3: nhớt láp) - lần 1\nsh 125i   4700   - nhớt máy (lần 3: nhớt láp) - lần 3","don_gia":0.0,"so_luong":1.0,"thanh_tien":0.0,"loai_cay":"wget","loai_nhap":"mua","nam":"2026"}, 
+ {"id":237,"ngay_nhap":"04/10/2026","tieu_de":"future     56000 - nhớt máy\nvision     83000 - nhớt máy (lần 3: nhớt láp) - lần 2\nsh 125i   4700   - nhớt máy (lần 3: nhớt láp) - lần 2","don_gia":0.0,"so_luong":1.0,"thanh_tien":0.0,"loai_cay":"wget","loai_nhap":"mua","nam":"2026"}, 
+ {"id":364,"ngay_nhap":"11/10/2026","tieu_de":"1kg túi bóng đựng 10kg","don_gia":35000.0,"so_luong":1.0,"thanh_tien":35000.0,"loai_cay":"khac","loai_nhap":"mua","nam":"2026"}, 
  {"id":309,"ngay_nhap":"24/08/2026","tieu_de":"Sầu riêng","don_gia":70000.0,"so_luong":1.0,"thanh_tien":70000.0,"loai_cay":"saurieng","loai_nhap":"ban","nam":"2026"}, 
  {"id":310,"ngay_nhap":"24/08/2026","tieu_de":"alvil","don_gia":80000.0,"so_luong":1.0,"thanh_tien":80000.0,"loai_cay":"saurieng","loai_nhap":"mua","nam":"2026"}, 
  {"id":306,"ngay_nhap":"23/08/2026","tieu_de":"Sầu riêng","don_gia":213000.0,"so_luong":1.0,"thanh_tien":213000.0,"loai_cay":"saurieng","loai_nhap":"ban","nam":"2026"}, 
@@ -194,4 +195,9 @@
  {"id":355,"ngay_nhap":"03/10/2026","tieu_de":"1,5 tạ phân nở bình điền","don_gia":1500000.0,"so_luong":1.0,"thanh_tien":1500000.0,"loai_cay":"saurieng","loai_nhap":"mua","nam":"2027"}, 
  {"id":356,"ngay_nhap":"03/10/2026","tieu_de":"NPK 15-15-15, 1 tạ bình điền","don_gia":2400000.0,"so_luong":1.0,"thanh_tien":2400000.0,"loai_cay":"caphe","loai_nhap":"mua","nam":"2026"}, 
  {"id":357,"ngay_nhap":"03/10/2026","tieu_de":"Sầu riêng","don_gia":40000.0,"so_luong":44.0,"thanh_tien":1760000.0,"loai_cay":"saurieng","loai_nhap":"ban","nam":"2026"}, 
- {"id":358,"ngay_nhap":"03/10/2026","tieu_de":"khuẩn","don_gia":69000.0,"so_luong":1.0,"thanh_tien":69000.0,"loai_cay":"saurieng","loai_nhap":"mua","nam":"2026"}]
+ {"id":358,"ngay_nhap":"03/10/2026","tieu_de":"khuẩn","don_gia":69000.0,"so_luong":1.0,"thanh_tien":69000.0,"loai_cay":"saurieng","loai_nhap":"mua","nam":"2026"}, 
+ {"id":359,"ngay_nhap":"04/10/2026","tieu_de":"loang trải","don_gia":138000.0,"so_luong":1.0,"thanh_tien":138000.0,"loai_cay":"saurieng","loai_nhap":"mua","nam":"2027"}, 
+ {"id":360,"ngay_nhap":"06/10/2026","tieu_de":"mọt, kiến","don_gia":625000.0,"so_luong":1.0,"thanh_tien":625000.0,"loai_cay":"caphe","loai_nhap":"mua","nam":"2026"}, 
+ {"id":362,"ngay_nhap":"10/10/2026","tieu_de":"phân vi sinh bình điền","don_gia":6000.0,"so_luong":80.0,"thanh_tien":480000.0,"loai_cay":"caphe","loai_nhap":"mua","nam":"2026"}, 
+ {"id":363,"ngay_nhap":"10/10/2026","tieu_de":"lân văn điển 1.5 tạ","don_gia":1000000.0,"so_luong":1.5,"thanh_tien":1500000.0,"loai_cay":"saurieng","loai_nhap":"mua","nam":"2027"}, 
+ {"id":361,"ngay_nhap":"10/10/2026","tieu_de":"lân văn điển 1.5 tạ","don_gia":1000000.0,"so_luong":1.5,"thanh_tien":1500000.0,"loai_cay":"caphe","loai_nhap":"mua","nam":"2026"}]
