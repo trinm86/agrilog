@@ -155,6 +155,7 @@
  {"id":315,"ngay_nhap":"29/08/2026","tieu_de":"Sầu riêng","don_gia":27000.0,"so_luong":1.0,"thanh_tien":27000.0,"loai_cay":"saurieng","loai_nhap":"ban","nam":"2026"}, 
  {"id":316,"ngay_nhap":"29/08/2026","tieu_de":"10kg kali trắng","don_gia":28000.0,"so_luong":10.0,"thanh_tien":280000.0,"loai_cay":"saurieng","loai_nhap":"mua","nam":"2026"}, 
  {"id":318,"ngay_nhap":"30/08/2026","tieu_de":"mâm phát cỏ","don_gia":50000.0,"so_luong":1.0,"thanh_tien":50000.0,"loai_cay":"khac","loai_nhap":"mua","nam":"2026"}, 
+ {"id":362,"ngay_nhap":"10/10/2026","tieu_de":"phân vi sinh bình điền (kg)","don_gia":6000.0,"so_luong":80.0,"thanh_tien":480000.0,"loai_cay":"caphe","loai_nhap":"mua","nam":"2026"}, 
  {"id":317,"ngay_nhap":"30/08/2026","tieu_de":"NPK 15-15-15, 3 con cò 1 tạ","don_gia":2400000.0,"so_luong":1.0,"thanh_tien":2400000.0,"loai_cay":"caphe","loai_nhap":"mua","nam":"2026"}, 
  {"id":319,"ngay_nhap":"02/09/2026","tieu_de":"Sầu riêng","don_gia":20000.0,"so_luong":1.0,"thanh_tien":20000.0,"loai_cay":"saurieng","loai_nhap":"ban","nam":"2026"}, 
  {"id":320,"ngay_nhap":"03/09/2026","tieu_de":"Sầu riêng","don_gia":71000.0,"so_luong":1.0,"thanh_tien":71000.0,"loai_cay":"saurieng","loai_nhap":"ban","nam":"2026"}, 
@@ -189,6 +190,8 @@
  {"id":349,"ngay_nhap":"25/09/2026","tieu_de":"aliette 80wg bayer","don_gia":270000.0,"so_luong":2.0,"thanh_tien":540000.0,"loai_cay":"saurieng","loai_nhap":"mua","nam":"2027"}, 
  {"id":350,"ngay_nhap":"26/09/2026","tieu_de":"Sầu riêng","don_gia":40000.0,"so_luong":250.0,"thanh_tien":10000000.0,"loai_cay":"saurieng","loai_nhap":"ban","nam":"2026"}, 
  {"id":351,"ngay_nhap":"28/09/2026","tieu_de":"Sầu riêng","don_gia":20000.0,"so_luong":1.0,"thanh_tien":20000.0,"loai_cay":"saurieng","loai_nhap":"ban","nam":"2026"}, 
+ {"id":365,"ngay_nhap":"14/10/2026","tieu_de":"ung trứng ","don_gia":89600.0,"so_luong":1.0,"thanh_tien":89600.0,"loai_cay":"caphe","loai_nhap":"mua","nam":"2026"}, 
+ {"id":366,"ngay_nhap":"14/10/2026","tieu_de":"nấm","don_gia":120000.0,"so_luong":1.0,"thanh_tien":120000.0,"loai_cay":"saurieng","loai_nhap":"mua","nam":"2026"}, 
  {"id":352,"ngay_nhap":"29/09/2026","tieu_de":"magie","don_gia":302000.0,"so_luong":1.0,"thanh_tien":302000.0,"loai_cay":"saurieng","loai_nhap":"mua","nam":"2026"}, 
  {"id":353,"ngay_nhap":"29/09/2026","tieu_de":"sâu, rầy","don_gia":223000.0,"so_luong":1.0,"thanh_tien":223000.0,"loai_cay":"saurieng","loai_nhap":"mua","nam":"2027"}, 
  {"id":354,"ngay_nhap":"02/10/2026","tieu_de":"mọt cành","don_gia":480000.0,"so_luong":1.0,"thanh_tien":480000.0,"loai_cay":"saurieng","loai_nhap":"mua","nam":"2027"}, 
@@ -198,6 +201,8 @@
  {"id":358,"ngay_nhap":"03/10/2026","tieu_de":"khuẩn","don_gia":69000.0,"so_luong":1.0,"thanh_tien":69000.0,"loai_cay":"saurieng","loai_nhap":"mua","nam":"2026"}, 
  {"id":359,"ngay_nhap":"04/10/2026","tieu_de":"loang trải","don_gia":138000.0,"so_luong":1.0,"thanh_tien":138000.0,"loai_cay":"saurieng","loai_nhap":"mua","nam":"2027"}, 
  {"id":360,"ngay_nhap":"06/10/2026","tieu_de":"mọt, kiến","don_gia":625000.0,"so_luong":1.0,"thanh_tien":625000.0,"loai_cay":"caphe","loai_nhap":"mua","nam":"2026"}, 
- {"id":362,"ngay_nhap":"10/10/2026","tieu_de":"phân vi sinh bình điền","don_gia":6000.0,"so_luong":80.0,"thanh_tien":480000.0,"loai_cay":"caphe","loai_nhap":"mua","nam":"2026"}, 
+ {"id":367,"ngay_nhap":"14/10/2026","tieu_de":"ung trứng","don_gia":134400.0,"so_luong":1.0,"thanh_tien":134400.0,"loai_cay":"saurieng","loai_nhap":"mua","nam":"2027"}, 
  {"id":363,"ngay_nhap":"10/10/2026","tieu_de":"lân văn điển 1.5 tạ","don_gia":1000000.0,"so_luong":1.5,"thanh_tien":1500000.0,"loai_cay":"saurieng","loai_nhap":"mua","nam":"2027"}, 
- {"id":361,"ngay_nhap":"10/10/2026","tieu_de":"lân văn điển 1.5 tạ","don_gia":1000000.0,"so_luong":1.5,"thanh_tien":1500000.0,"loai_cay":"caphe","loai_nhap":"mua","nam":"2026"}]
+ {"id":361,"ngay_nhap":"10/10/2026","tieu_de":"lân văn điển 1.5 tạ","don_gia":1000000.0,"so_luong":1.5,"thanh_tien":1500000.0,"loai_cay":"caphe","loai_nhap":"mua","nam":"2026"}, 
+ {"id":368,"ngay_nhap":"17/10/2026","tieu_de":"Amistar Top 100ml","don_gia":140000.0,"so_luong":1.0,"thanh_tien":140000.0,"loai_cay":"saurieng","loai_nhap":"mua","nam":"2026"}, 
+ {"id":369,"ngay_nhap":"17/10/2026","tieu_de":"lân văn điển (kg)","don_gia":8400.0,"so_luong":50.0,"thanh_tien":420000.0,"loai_cay":"caphe","loai_nhap":"mua","nam":"2026"}]
